@@ -33,6 +33,7 @@ public class ExaminationFileController {
         }
     }
 
+
     @GetMapping("/{id}/file")
     public ResponseEntity<String> getFilePath(@PathVariable Long id) {
         return examinationService.getExaminationById(id)
