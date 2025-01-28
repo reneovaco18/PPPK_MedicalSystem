@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,6 +25,9 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ExaminationType type;
+
+    @Column(name = "appointment_date", nullable = false)
+    private LocalDate appointmentDate; // Changed to LocalDate
 
     @Column(nullable = false)
     private LocalDateTime dateTime;

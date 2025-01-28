@@ -109,9 +109,10 @@ export default {
       formData.append('file', this.selectedFile);
 
       try {
-        await axiosClient.post(`/examinations/${this.existingExamination.id}/upload`, formData, {
+        await axiosClient.post(`/examination-files/${this.existingExamination.id}/upload`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
+
         alert('File uploaded successfully');
       } catch (err) {
         console.error(err);

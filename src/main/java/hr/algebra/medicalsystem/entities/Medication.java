@@ -1,29 +1,29 @@
 package hr.algebra.medicalsystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class MedicalRecord {
+public class Medication {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // REMOVE @JsonIgnore so we *can* serialize the patient's data on this side
+    // Link each medication to a single patient
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
-    private String illnessName;
-    private LocalDate startDate;
-    private LocalDate endDate;
-}
+    @NotBlank
+    private String name;   // e.g. “Ibuprofen”
 
+    @NotBlank
+    private String dosage; // e.g. “200mg daily”
+}

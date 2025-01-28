@@ -22,10 +22,21 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
+    // NEW: Get all appointments
+    @GetMapping
+    public ResponseEntity<List<Appointment>> getAllAppointments() {
+        List<Appointment> appointments = appointmentService.getAllAppointments();
+        return new ResponseEntity<>(appointments, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(@Validated @RequestBody Appointment appointment) {
-        Appointment createdAppointment = appointmentService.saveAppointment(appointment);
-        return new ResponseEntity<>(createdAppointment, HttpStatus.CREATED);
+        try {
+            Appointment createdAppointment = appointmentService.saveAppointment(appointment);
+            return new ResponseEntity<>(createdAppointment, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/patient/{patientId}")
@@ -37,20 +48,31 @@ public class AppointmentController {
     @GetMapping("/{id}")
     public ResponseEntity<Appointment> getAppointmentById(@PathVariable Long id) {
         Optional<Appointment> appointment = appointmentService.getAppointmentById(id);
-        return appointment.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+        return appointment
+                .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id, @Validated @RequestBody Appointment appointmentDetails) {
-        Optional<Appointment> updatedAppointment = appointmentService.updateAppointment(id, appointmentDetails);
-        return updatedAppointment.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Appointment> updateAppointment(
+            @PathVariable Long id,
+            @Validated @RequestBody Appointment appointmentDetails
+    ) {
+        try {
+            Optional<Appointment> updatedAppointment = appointmentService.updateAppointment(id, appointmentDetails);
+            return updatedAppointment
+                    .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
         boolean isDeleted = appointmentService.deleteAppointment(id);
-        return isDeleted ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return isDeleted
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

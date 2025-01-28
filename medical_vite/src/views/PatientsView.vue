@@ -14,14 +14,30 @@
       />
     </div>
 
-    <!-- Searching by OIB -->
+    <!-- Search by OIB -->
     <div>
       <h3>Search by OIB</h3>
-      <input v-model="searchOib" placeholder="Enter OIB"/>
+      <input v-model="searchOib" placeholder="Enter OIB" />
       <button @click="searchByOib">Search</button>
       <div v-if="foundPatient">
         Found patient: {{ foundPatient.firstName }} {{ foundPatient.lastName }}
-        <button @click="clearSearch">Clear</button>
+        <button @click="clearSearchOib">Clear</button>
+      </div>
+    </div>
+
+    <!-- Search by Last Name -->
+    <div>
+      <h3>Search by Last Name</h3>
+      <input v-model="searchLastName" placeholder="Enter last name" />
+      <button @click="searchByLastName">Search</button>
+      <div v-if="foundPatientsByLastName && foundPatientsByLastName.length > 0">
+        <h4>Found patient(s):</h4>
+        <ul>
+          <li v-for="p in foundPatientsByLastName" :key="p.id">
+            {{ p.firstName }} {{ p.lastName }} (OIB: {{ p.oib }})
+          </li>
+        </ul>
+        <button @click="clearSearchLastName">Clear</button>
       </div>
     </div>
 
@@ -49,7 +65,7 @@
 
 <script>
 import axiosClient from '../api/axiosClient';
-import PatientForm from '../components/PatientForm.vue'; // or wherever your form is
+import PatientForm from '../components/PatientForm.vue';
 
 export default {
   name: 'PatientsView',
@@ -59,8 +75,14 @@ export default {
       showCreateForm: false,
       patients: [],
       selectedPatient: null,
+
+      // OIB search
       searchOib: '',
       foundPatient: null,
+
+      // Last name search
+      searchLastName: '',
+      foundPatientsByLastName: [],
     };
   },
   methods: {
@@ -72,10 +94,11 @@ export default {
         console.error(err);
       }
     },
+
     editPatient(patient) {
-      // Shallow copy to avoid immediate binding
       this.selectedPatient = { ...patient };
     },
+
     async deletePatient(patientId) {
       if (!confirm('Are you sure you want to delete this patient?')) return;
       try {
@@ -86,6 +109,8 @@ export default {
         console.error(err);
       }
     },
+
+    // OIB
     async searchByOib() {
       if (!this.searchOib) return;
       try {
@@ -95,9 +120,24 @@ export default {
         alert('Patient not found or error occurred');
       }
     },
-    clearSearch() {
+    clearSearchOib() {
       this.foundPatient = null;
       this.searchOib = '';
+    },
+
+    // LAST NAME
+    async searchByLastName() {
+      if (!this.searchLastName) return;
+      try {
+        const res = await axiosClient.get(`/patients/search/lastName?lastName=${this.searchLastName}`);
+        this.foundPatientsByLastName = res.data;
+      } catch (error) {
+        alert('No patients found or error occurred');
+      }
+    },
+    clearSearchLastName() {
+      this.foundPatientsByLastName = [];
+      this.searchLastName = '';
     },
   },
   mounted() {

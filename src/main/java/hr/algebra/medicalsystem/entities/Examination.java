@@ -4,12 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.Pattern;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,6 +33,10 @@ public class Examination {
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
-    private String filePath; // Path to the uploaded file
-}
+    // Single-file approach (optional)
+    private String filePath;
 
+    // Multiple-file approach
+    @OneToMany(mappedBy = "examination", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ExaminationFile> files = new ArrayList<>();
+}

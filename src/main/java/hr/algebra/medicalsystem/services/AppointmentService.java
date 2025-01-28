@@ -18,7 +18,18 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
+    // NEW: Get all appointments
+    public List<Appointment> getAllAppointments() {
+        return appointmentRepository.findAll();
+    }
+
     public Appointment saveAppointment(Appointment appointment) {
+        // Automatically set appointmentDate based on dateTime
+        if (appointment.getDateTime() != null) {
+            appointment.setAppointmentDate(appointment.getDateTime().toLocalDate());
+        } else {
+            throw new IllegalArgumentException("dateTime must not be null");
+        }
         return appointmentRepository.save(appointment);
     }
 
@@ -35,6 +46,12 @@ public class AppointmentService {
             appointment.setPatient(appointmentDetails.getPatient());
             appointment.setType(appointmentDetails.getType());
             appointment.setDateTime(appointmentDetails.getDateTime());
+            // Update appointmentDate based on new dateTime
+            if (appointmentDetails.getDateTime() != null) {
+                appointment.setAppointmentDate(appointmentDetails.getDateTime().toLocalDate());
+            } else {
+                throw new IllegalArgumentException("dateTime must not be null");
+            }
             return appointmentRepository.save(appointment);
         });
     }
@@ -47,3 +64,4 @@ public class AppointmentService {
         return false;
     }
 }
+
