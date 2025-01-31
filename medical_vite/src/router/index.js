@@ -3,9 +3,12 @@ import PatientsView from '../views/PatientsView.vue';
 import ExaminationsView from '../views/ExaminationsView.vue';
 import AppointmentsView from '../views/AppointmentsView.vue';
 import MedicalRecordsView from '../views/MedicalRecordsView.vue';
+import MedicationsView from '../views/MedicationsView.vue';
+
 
 const routes = [
     { path: '/', redirect: '/patients' },
+    { path: '/medications', component: MedicationsView },
     { path: '/patients', component: PatientsView },
     { path: '/examinations', component: ExaminationsView },
     { path: '/appointments', component: AppointmentsView },

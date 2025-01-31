@@ -5,20 +5,49 @@
       <!-- Patient ID -->
       <div>
         <label>Patient ID:</label>
-        <input type="number" v-model="appointmentData.patientId" required />
+        <input
+            type="number"
+            v-model="appointmentData.patientId"
+            required
+        />
       </div>
-      <!-- Examination Type Enum: GP, KRV, etc. or your own list -->
+
+      <!-- Examination Type: use a <select> so the user must choose from the enum values -->
       <div>
         <label>Type:</label>
-        <input v-model="appointmentData.type" required />
+        <select
+            v-model="appointmentData.type"
+            required
+        >
+          <option
+              v-for="examType in examOptions"
+              :key="examType"
+              :value="examType"
+          >
+            {{ examType }}
+          </option>
+        </select>
       </div>
+
       <!-- DateTime -->
       <div>
         <label>Date/Time:</label>
-        <input type="datetime-local" v-model="appointmentData.dateTime" required />
+        <input
+            type="datetime-local"
+            v-model="appointmentData.dateTime"
+            required
+        />
       </div>
-      <button type="submit">Save</button>
-      <button type="button" @click="$emit('closeForm')">Cancel</button>
+
+      <button type="submit">
+        Save
+      </button>
+      <button
+          type="button"
+          @click="$emit('closeForm')"
+      >
+        Cancel
+      </button>
     </form>
   </div>
 </template>
@@ -41,6 +70,22 @@ export default {
         type: '',
         dateTime: '',
       },
+      // The list of enum values from your Java ExaminationType enum:
+      examOptions: [
+        'GP',
+        'KRV',
+        'X_RAY',
+        'CT',
+        'MR',
+        'ULTRA',
+        'EKG',
+        'ECHO',
+        'EYE',
+        'DERM',
+        'DENTA',
+        'MAMMO',
+        'NEURO',
+      ],
     };
   },
   computed: {
@@ -49,6 +94,7 @@ export default {
     },
   },
   mounted() {
+    // If in edit mode, populate the form with existing data
     if (this.isEditMode) {
       this.appointmentData = {
         patientId: this.existingAppointment.patient?.id,
@@ -60,9 +106,9 @@ export default {
   methods: {
     async saveAppointment() {
       try {
-        // Construct JSON as the back end expects:
+        // Construct payload as the back end expects
         const payload = {
-          patient: { id: this.appointmentData.patientId },
+          patient: {id: this.appointmentData.patientId},
           type: this.appointmentData.type,
           dateTime: this.appointmentData.dateTime,
         };

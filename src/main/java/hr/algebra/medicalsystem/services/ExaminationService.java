@@ -47,11 +47,16 @@ public class ExaminationService {
         return examinationRepository.findById(id).map(examination -> {
             examination.setDateTime(updatedExamination.getDateTime());
             examination.setType(updatedExamination.getType());
-            examination.setFilePath(updatedExamination.getFilePath());
+
+            // Do NOT overwrite files if updating examination details
+            if (updatedExamination.getFilePath() != null) {
+                examination.setFilePath(updatedExamination.getFilePath());
+            }
 
             return examinationRepository.save(examination);
         });
     }
+
 
     public boolean deleteExamination(Long id) {
         if (examinationRepository.existsById(id)) {

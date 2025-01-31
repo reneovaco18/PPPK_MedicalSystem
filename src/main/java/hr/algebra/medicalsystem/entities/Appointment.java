@@ -23,8 +23,9 @@ public class Appointment {
     private Patient patient;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "appointment_type", nullable = false)
     private ExaminationType type;
+
 
     @Column(name = "appointment_date", nullable = false)
     private LocalDate appointmentDate; // Changed to LocalDate

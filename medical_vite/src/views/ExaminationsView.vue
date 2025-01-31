@@ -31,11 +31,20 @@
     <h3>All Examinations</h3>
     <ul>
       <li v-for="exam in examinations" :key="exam.id">
-        [{{ exam.type }}] - {{ exam.dateTime }} (Patient ID: {{ exam.patient?.id }})
+        <strong>Type:</strong> {{ exam.type }} - <strong>Date:</strong> {{ exam.dateTime }} (Patient ID: {{ exam.patient?.id }})
         <button @click="editExamination(exam)">Edit</button>
         <button @click="deleteExamination(exam.id)">Delete</button>
+
+        <!-- Show images if available -->
+        <div v-if="exam.files && exam.files.length > 0">
+          <h4>Uploaded Images:</h4>
+          <div v-for="file in exam.files" :key="file.id">
+            <img :src="file.filePath" alt="Examination Image" style="max-width: 200px; display: block; margin-bottom: 10px;" />
+          </div>
+        </div>
       </li>
     </ul>
+
 
     <div v-if="selectedExamination">
       <h3>Edit Examination</h3>

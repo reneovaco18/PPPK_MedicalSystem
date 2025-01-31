@@ -2,13 +2,13 @@
   <div>
     <h3>{{ isEditMode ? 'Edit Examination' : 'Create Examination' }}</h3>
     <form @submit.prevent="saveExamination">
-      <!-- Patient ID (assuming user enters it or select from dropdown if you want) -->
+      <!-- Patient ID -->
       <div>
         <label>Patient ID:</label>
         <input type="number" v-model="examinationData.patientId" required />
       </div>
 
-      <!-- Examination Type (GP, KRV, X_RAY, etc.) -->
+      <!-- Examination Type -->
       <div>
         <label>Type:</label>
         <input v-model="examinationData.type" required />
@@ -24,20 +24,33 @@
       <button type="button" @click="$emit('closeForm')">Cancel</button>
     </form>
 
-    <!-- Optional file upload (only if isEditMode is true and you want to upload a file) -->
+    <!-- File Upload (Only in Edit Mode) -->
     <div v-if="isEditMode">
-      <h4>Upload File for This Examination</h4>
-      <input type="file" @change="onFileChange" />
-      <button @click="uploadFile" :disabled="!selectedFile">Upload</button>
+      <h4>Upload Images</h4>
+      <input type="file" multiple @change="onFileChange" />
+      <button @click="uploadFiles" :disabled="selectedFiles.length === 0">Upload</button>
+
+      <!-- Show Preview of Selected Files -->
+      <div v-if="selectedFiles.length > 0">
+        <h5>Selected Files:</h5>
+        <ul>
+          <li v-for="file in selectedFiles" :key="file.name">{{ file.name }}</li>
+        </ul>
+      </div>
+
+      <!-- Show Previously Uploaded Files -->
+      <div v-if="existingFiles.length > 0">
+        <h4>Uploaded Images:</h4>
+        <div v-for="file in existingFiles" :key="file.id">
+          <img :src="file.filePath" alt="Examination Image" style="max-width: 200px; display: block; margin-bottom: 10px;" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axiosClient from '../api/axiosClient';
-
-// Notice we must pass "patient" as an object in the back-end, but
-// for simplicity, we store only the patientId here and reconstruct the object.
 
 export default {
   name: 'ExaminationForm',
@@ -49,12 +62,12 @@ export default {
   },
   data() {
     return {
-      selectedFile: null,
+      selectedFiles: [],
+      existingFiles: [],
       examinationData: {
         patientId: null,
         type: '',
         dateTime: '',
-        // filePath is handled separately with upload
       },
     };
   },
@@ -65,21 +78,20 @@ export default {
   },
   mounted() {
     if (this.isEditMode) {
-      // Convert existingExamination into a structure we can save
-      // Remember your back-end expects an object like:
-      // { patient: { id: X }, type: 'GP', dateTime: ... }
-      // We'll store patientId for the form, so let's do that:
+      // Populate form fields if editing
       this.examinationData = {
         patientId: this.existingExamination.patient?.id,
         type: this.existingExamination.type,
         dateTime: this.existingExamination.dateTime,
       };
+
+      // Load existing uploaded files
+      this.fetchExistingFiles();
     }
   },
   methods: {
     async saveExamination() {
       try {
-        // Reconstruct the JSON structure for back-end
         const payload = {
           patient: { id: this.examinationData.patientId },
           type: this.examinationData.type,
@@ -100,23 +112,37 @@ export default {
         alert('Error saving examination');
       }
     },
-    onFileChange(e) {
-      this.selectedFile = e.target.files[0];
+
+    async fetchExistingFiles() {
+      try {
+        const res = await axiosClient.get(`/examinations/${this.existingExamination.id}`);
+        if (res.data.files) {
+          this.existingFiles = res.data.files;
+        }
+      } catch (err) {
+        console.error('Error fetching existing files:', err);
+      }
     },
-    async uploadFile() {
-      if (!this.selectedFile || !this.existingExamination) return;
+
+    onFileChange(event) {
+      this.selectedFiles = Array.from(event.target.files); // Convert FileList to Array
+    },
+
+    async uploadFiles() {
+      if (!this.selectedFiles.length || !this.existingExamination) return;
       const formData = new FormData();
-      formData.append('file', this.selectedFile);
+      this.selectedFiles.forEach(file => formData.append('files', file));
 
       try {
-        await axiosClient.post(`/examination-files/${this.existingExamination.id}/upload`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+        await axiosClient.post(`/examination-files/${this.existingExamination.id}/upload-multiple`, formData, {
+          headers: {'Content-Type': 'multipart/form-data'},
         });
 
-        alert('File uploaded successfully');
+        alert('Files uploaded successfully');
+        this.fetchExistingFiles(); // Refresh uploaded images
       } catch (err) {
         console.error(err);
-        alert('Error uploading file');
+        alert('Error uploading files');
       }
     },
   },
