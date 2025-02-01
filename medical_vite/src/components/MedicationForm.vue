@@ -1,97 +1,87 @@
 <template>
   <div>
-    <h2>Medications</h2>
-
-    <!-- Button to show/hide the create form -->
-    <button @click="showCreateForm = !showCreateForm">
-      {{ showCreateForm ? 'Cancel' : 'Create New Medication' }}
-    </button>
-
-    <div v-if="showCreateForm">
-      <medication-form
-          @closeForm="showCreateForm = false"
-          @refreshList="fetchMedications"
-      />
-    </div>
-
-    <!-- Search by Patient ID -->
-    <div>
-      <h3>Search Medications by Patient ID</h3>
-      <input v-model="searchPatientId" placeholder="Enter Patient ID" />
-      <button @click="fetchMedicationsByPatient">Search</button>
-    </div>
-
-    <!-- Display Medications -->
-    <h3>All Medications</h3>
-    <ul>
-      <li v-for="med in medications" :key="med.id">
-        (Patient ID: {{ med.patient?.id }}) {{ med.name }} - {{ med.dosage }}
-        <button @click="editMedication(med)">Edit</button>
-        <button @click="deleteMedication(med.id)">Delete</button>
-      </li>
-    </ul>
-
-    <!-- Edit Medication -->
-    <div v-if="selectedMedication">
-      <h3>Edit Medication</h3>
-      <medication-form
-          :existingMedication="selectedMedication"
-          @closeForm="selectedMedication = null"
-          @refreshList="fetchMedications"
-      />
-    </div>
+    <h3>{{ isEditMode ? 'Edit Medication' : 'Create Medication' }}</h3>
+    <form @submit.prevent="saveMedication">
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <!-- Patient ID -->
+      <div>
+        <label>Patient ID:</label>
+        <input type="number" v-model.number="medicationData.patientId" required />
+      </div>
+      <!-- Medication Name -->
+      <div>
+        <label>Name:</label>
+        <input type="text" v-model="medicationData.name" required />
+      </div>
+      <!-- Dosage -->
+      <div>
+        <label>Dosage:</label>
+        <input type="text" v-model="medicationData.dosage" required />
+      </div>
+      <button type="submit">Save</button>
+      <button type="button" @click="$emit('closeForm')">Cancel</button>
+    </form>
   </div>
 </template>
 
 <script>
 import axiosClient from '../api/axiosClient';
-import MedicationForm from '../components/MedicationForm.vue';
 
 export default {
-  name: 'MedicationsView',
-  components: { MedicationForm },
+  name: 'MedicationForm',
+  props: {
+    existingMedication: {
+      type: Object,
+      default: null,
+    },
+  },
   data() {
     return {
-      medications: [],
-      showCreateForm: false,
-      selectedMedication: null,
-      searchPatientId: '',
+      errorMessage: '',
+      medicationData: {
+        patientId: null,
+        name: '',
+        dosage: '',
+      },
     };
   },
-  methods: {
-    async fetchMedications() {
-      try {
-        const res = await axiosClient.get('/medications');
-        this.medications = res.data;
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    async fetchMedicationsByPatient() {
-      if (!this.searchPatientId) return;
-      try {
-        const res = await axiosClient.get(`/medications/patient/${this.searchPatientId}`);
-        this.medications = res.data;
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    editMedication(med) {
-      this.selectedMedication = { ...med };
-    },
-    async deleteMedication(id) {
-      if (!confirm('Are you sure?')) return;
-      try {
-        await axiosClient.delete(`/medications/${id}`);
-        alert('Medication deleted');
-        this.fetchMedications();
-      } catch (err) {
-        console.error(err);
-      }
+  computed: {
+    isEditMode() {
+      return !!this.existingMedication;
     },
   },
   mounted() {
-    this.fetchMedications();
+    if (this.isEditMode) {
+      this.medicationData = {
+        patientId: this.existingMedication.patient?.id,
+        name: this.existingMedication.name,
+        dosage: this.existingMedication.dosage,
+      };
+    }
+  },
+  methods: {
+    async saveMedication() {
+      this.errorMessage = '';
+      try {
+        const payload = {
+          patient: {id: this.medicationData.patientId},
+          name: this.medicationData.name,
+          dosage: this.medicationData.dosage,
+        };
+        if (this.isEditMode) {
+          await axiosClient.put(`/medications/${this.existingMedication.id}`, payload);
+          alert('Medication updated');
+        } else {
+          await axiosClient.post('/medications', payload);
+          alert('Medication created');
+        }
+        this.$emit('refreshList');
+        this.$emit('closeForm');
+      } catch (err) {
+        console.error(err);
+        this.errorMessage = err.response?.data?.message || 'Error saving medication';
+      }
+    },
   },
 };
 </script>

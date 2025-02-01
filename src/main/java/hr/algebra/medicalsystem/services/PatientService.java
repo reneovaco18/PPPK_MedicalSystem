@@ -2,11 +2,13 @@ package hr.algebra.medicalsystem.services;
 
 import hr.algebra.medicalsystem.entities.Patient;
 import hr.algebra.medicalsystem.repositories.PatientRepository;
+import hr.algebra.medicalsystem.utils.CSVExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,31 +68,18 @@ public class PatientService {
         return false;
     }
 
-    // Export patient data to CSV
+    // Export patient data to CSV using the CSVExporter utility.
     public String exportPatientsToCSV() {
         List<Patient> patients = patientRepository.findAll();
         String csvFile = "patients.csv";
-
-        try (FileWriter writer = new FileWriter(csvFile)) {
-            writer.append("ID,First Name,Last Name,OIB,Date of Birth,Gender\n");
-            for (Patient patient : patients) {
-                writer.append(String.valueOf(patient.getId()))
-                        .append(',')
-                        .append(patient.getFirstName())
-                        .append(',')
-                        .append(patient.getLastName())
-                        .append(',')
-                        .append(patient.getOib())
-                        .append(',')
-                        .append(patient.getDateOfBirth().toString())
-                        .append(',')
-                        .append(patient.getGender())
-                        .append('\n');
-            }
+        CSVExporter exporter = new CSVExporter();
+        try (FileWriter fw = new FileWriter(csvFile);
+             PrintWriter writer = new PrintWriter(fw)) {
+            exporter.writePatientsToCSV(writer, patients);
             return csvFile;
-
         } catch (IOException e) {
             throw new RuntimeException("Error while exporting patients to CSV", e);
         }
     }
+
 }

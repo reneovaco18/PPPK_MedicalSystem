@@ -1,6 +1,7 @@
 package hr.algebra.medicalsystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -58,5 +59,8 @@ public class Patient {
     private String patientNumber;
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+    @JsonManagedReference  // Helps Jackson avoid infinite recursion
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Medication> medications;
 
 }

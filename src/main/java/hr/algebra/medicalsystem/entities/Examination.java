@@ -1,5 +1,6 @@
 package hr.algebra.medicalsystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +34,8 @@ public class Examination {
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
-    // Single-file approach (optional)
-    private String filePath;
-
-    // Multiple-file approach
+    // Only support multiple images via the one-to-many relationship.
     @OneToMany(mappedBy = "examination", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<ExaminationFile> files = new ArrayList<>();
 }

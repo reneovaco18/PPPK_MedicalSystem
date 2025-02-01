@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h1>Medical System Frontend</h1>
     <nav>
       <router-link to="/patients">Patients</router-link> |
@@ -8,8 +8,7 @@
       <router-link to="/medical-records">Medical Records</router-link> |
       <router-link to="/medications">Medications</router-link>
     </nav>
-
-    <hr/>
+    <hr />
     <router-view />
   </div>
 </template>
@@ -21,5 +20,5 @@ export default {
 </script>
 
 <style scoped>
-/* Simple styling as needed */
+/* Additional scoped styles if needed */
 </style>

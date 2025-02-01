@@ -1,5 +1,6 @@
 package hr.algebra.medicalsystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +16,12 @@ public class ExaminationFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Each file belongs to one examination
+    // ExaminationFile.java
     @ManyToOne
     @JoinColumn(name = "examination_id", nullable = false)
+    @JsonBackReference
     private Examination examination;
+
 
     private String filePath;  // e.g., URL to the image/file in S3
 }

@@ -13,7 +13,7 @@
           @refreshList="fetchPatients"
       />
     </div>
-
+    <button @click="downloadCSV">Export Patients CSV</button>
     <!-- Search by OIB -->
     <div>
       <h3>Search by OIB</h3>
@@ -98,7 +98,22 @@ export default {
     editPatient(patient) {
       this.selectedPatient = { ...patient };
     },
-
+    downloadCSV() {
+      axiosClient
+          .get('/patients/export', { responseType: 'blob' })
+          .then(response => {
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/csv' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'patients.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          })
+          .catch(error => {
+            console.error('CSV Download error:', error);
+          });
+    },
     async deletePatient(patientId) {
       if (!confirm('Are you sure you want to delete this patient?')) return;
       try {

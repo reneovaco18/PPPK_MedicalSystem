@@ -1,6 +1,19 @@
 import { createApp } from 'vue';
-import App from './App.vue'; // or './App.vue' if you keep it in src/
+import App from './App.vue';
 import router from './router/index.js';
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 import './style.css';
 
-createApp(App).use(router).mount('#app');
+const app = createApp(App);
+
+app.use(router);
+app.use(Toast, {
+    timeout: 3000,
+    position: 'top-right',
+});
+
+app.mount('#app');
+
+// Expose the toast instance globally for use in non-component files (such as axios interceptors)
+window.$toast = app.config.globalProperties.$toast;

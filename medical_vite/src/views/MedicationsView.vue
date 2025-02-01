@@ -1,27 +1,12 @@
 <template>
   <div>
     <h2>Medications</h2>
-
-    <!-- Button to show/hide the create form -->
-    <button @click="showCreateForm = !showCreateForm">
+    <button @click="toggleCreateForm">
       {{ showCreateForm ? 'Cancel' : 'Create New Medication' }}
     </button>
-
     <div v-if="showCreateForm">
-      <medication-form
-          @closeForm="showCreateForm = false"
-          @refreshList="fetchMedications"
-      />
+      <medication-form @closeForm="toggleCreateForm" @refreshList="fetchMedications" />
     </div>
-
-    <!-- Search by Patient ID -->
-    <div>
-      <h3>Search Medications by Patient ID</h3>
-      <input v-model="searchPatientId" placeholder="Enter Patient ID" />
-      <button @click="fetchMedicationsByPatient">Search</button>
-    </div>
-
-    <!-- Display Medications -->
     <h3>All Medications</h3>
     <ul>
       <li v-for="med in medications" :key="med.id">
@@ -30,32 +15,25 @@
         <button @click="deleteMedication(med.id)">Delete</button>
       </li>
     </ul>
-
-    <!-- Edit Medication -->
     <div v-if="selectedMedication">
       <h3>Edit Medication</h3>
-      <medication-form
-          :existingMedication="selectedMedication"
-          @closeForm="selectedMedication = null"
-          @refreshList="fetchMedications"
-      />
+      <medication-form :existingMedication="selectedMedication" @closeForm="selectedMedication = null" @refreshList="fetchMedications" />
     </div>
   </div>
 </template>
 
 <script>
 import axiosClient from '../api/axiosClient';
-import MedicationForm from '../components/MedicationForm.vue'; // ✅ Import MedicationForm here
+import MedicationForm from '../components/MedicationForm.vue';
 
 export default {
   name: 'MedicationsView',
-  components: { MedicationForm }, // ✅ Register the component
+  components: { MedicationForm },
   data() {
     return {
       medications: [],
       showCreateForm: false,
       selectedMedication: null,
-      searchPatientId: '',
     };
   },
   methods: {
@@ -67,17 +45,11 @@ export default {
         console.error(err);
       }
     },
-    async fetchMedicationsByPatient() {
-      if (!this.searchPatientId) return;
-      try {
-        const res = await axiosClient.get(`/medications/patient/${this.searchPatientId}`);
-        this.medications = res.data;
-      } catch (err) {
-        console.error(err);
-      }
+    toggleCreateForm() {
+      this.showCreateForm = !this.showCreateForm;
     },
     editMedication(med) {
-      this.selectedMedication = { ...med };
+      this.selectedMedication = {...med};
     },
     async deleteMedication(id) {
       if (!confirm('Are you sure?')) return;

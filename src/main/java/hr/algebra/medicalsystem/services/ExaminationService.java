@@ -47,16 +47,10 @@ public class ExaminationService {
         return examinationRepository.findById(id).map(examination -> {
             examination.setDateTime(updatedExamination.getDateTime());
             examination.setType(updatedExamination.getType());
-
-            // Do NOT overwrite files if updating examination details
-            if (updatedExamination.getFilePath() != null) {
-                examination.setFilePath(updatedExamination.getFilePath());
-            }
-
+            // Do not modify the files list here; assume file uploads are managed separately.
             return examinationRepository.save(examination);
         });
     }
-
 
     public boolean deleteExamination(Long id) {
         if (examinationRepository.existsById(id)) {
@@ -65,12 +59,4 @@ public class ExaminationService {
         }
         return false;
     }
-    public boolean updateFilePath(Long id, String filePath) {
-        return examinationRepository.findById(id).map(examination -> {
-            examination.setFilePath(filePath);
-            examinationRepository.save(examination);
-            return true;
-        }).orElse(false);
-    }
-
 }

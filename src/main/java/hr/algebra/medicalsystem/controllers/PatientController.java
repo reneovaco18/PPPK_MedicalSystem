@@ -3,16 +3,23 @@ package hr.algebra.medicalsystem.controllers;
 import hr.algebra.medicalsystem.entities.Patient;
 import hr.algebra.medicalsystem.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/patients")
+@Validated
 public class PatientController {
 
     private final PatientService patientService;
@@ -51,8 +58,8 @@ public class PatientController {
     @GetMapping("/search/lastName")
     public ResponseEntity<List<Patient>> searchPatientsByLastName(@RequestParam String lastName) {
         List<Patient> patients = patientService.getPatientsByLastName(lastName);
-        return patients.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(patients, HttpStatus.OK);
+        return patients.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<>(patients, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -65,16 +72,23 @@ public class PatientController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         boolean isDeleted = patientService.deletePatient(id);
-        return isDeleted ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return isDeleted ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/export")
-    public ResponseEntity<String> exportPatientsToCSV() {
+    public ResponseEntity<Resource> exportPatientsToCSV() {
         try {
             String filePath = patientService.exportPatientsToCSV();
-            return new ResponseEntity<>("Patients exported successfully. File path: " + filePath, HttpStatus.OK);
+            File file = new File(filePath);
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=patients.csv")
+                    .contentType(MediaType.parseMediaType("text/csv"))
+                    .contentLength(file.length())
+                    .body(resource);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error exporting patients: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

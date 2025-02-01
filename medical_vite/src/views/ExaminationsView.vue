@@ -22,7 +22,8 @@
         <h4>Search Results:</h4>
         <ul>
           <li v-for="exam in searchResults" :key="exam.id">
-            Type: {{ exam.type }} / Date: {{ exam.dateTime }}
+            <strong>Type:</strong> {{ exam.type }} / <strong>Date:</strong> {{ exam.dateTime }}
+            <router-link :to="{ name: 'ExaminationDetails', params: { id: exam.id } }">View Details</router-link>
           </li>
         </ul>
       </div>
@@ -31,7 +32,12 @@
     <h3>All Examinations</h3>
     <ul>
       <li v-for="exam in examinations" :key="exam.id">
-        <strong>Type:</strong> {{ exam.type }} - <strong>Date:</strong> {{ exam.dateTime }} (Patient ID: {{ exam.patient?.id }})
+        <strong>Type:</strong> {{ exam.type }} - <strong>Date:</strong> {{ exam.dateTime }}
+        (Patient ID: {{ exam.patient?.id }}, Name: {{ exam.patient?.name }})
+
+        <!-- Link to the details page -->
+        <router-link :to="{ name: 'ExaminationDetails', params: { id: exam.id } }">View Details</router-link>
+
         <button @click="editExamination(exam)">Edit</button>
         <button @click="deleteExamination(exam.id)">Delete</button>
 
@@ -80,19 +86,21 @@ export default {
         this.examinations = res.data;
       } catch (err) {
         console.error(err);
+        alert('Failed to fetch examinations.');
       }
     },
     editExamination(exam) {
       this.selectedExamination = { ...exam };
     },
     async deleteExamination(examId) {
-      if (!confirm('Are you sure?')) return;
+      if (!confirm('Are you sure you want to delete this examination?')) return;
       try {
         await axiosClient.delete(`/examinations/${examId}`);
-        alert('Examination deleted');
+        alert('Examination deleted successfully.');
         this.fetchExaminations();
       } catch (err) {
         console.error(err);
+        alert('Failed to delete examination.');
       }
     },
     async searchByPatientId() {
@@ -101,7 +109,8 @@ export default {
         const res = await axiosClient.get(`/examinations/patient/${this.searchPatientId}`);
         this.searchResults = res.data;
       } catch (err) {
-        alert('Error searching by patient ID');
+        console.error(err);
+        alert('Error searching by patient ID.');
       }
     },
   },
@@ -110,3 +119,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Add any desired styles here */
+</style>
