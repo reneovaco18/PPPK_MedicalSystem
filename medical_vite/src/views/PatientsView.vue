@@ -7,14 +7,18 @@
       {{ showCreateForm ? 'Cancel' : 'Create New Patient' }}
     </button>
 
+    <!-- New Patient Form -->
     <div v-if="showCreateForm">
       <patient-form
           @closeForm="showCreateForm = false"
           @refreshList="fetchPatients"
       />
     </div>
+
+    <!-- CSV Export -->
     <button @click="downloadCSV">Export Patients CSV</button>
-    <!-- Search by OIB -->
+
+    <!-- OIB Search -->
     <div>
       <h3>Search by OIB</h3>
       <input v-model="searchOib" placeholder="Enter OIB" />
@@ -25,33 +29,34 @@
       </div>
     </div>
 
-    <!-- Search by Last Name -->
+    <!-- Last Name Search -->
     <div>
       <h3>Search by Last Name</h3>
       <input v-model="searchLastName" placeholder="Enter last name" />
       <button @click="searchByLastName">Search</button>
-      <div v-if="foundPatientsByLastName && foundPatientsByLastName.length > 0">
+      <div v-if="foundPatientsByLastName.length > 0">
         <h4>Found patient(s):</h4>
         <ul>
           <li v-for="p in foundPatientsByLastName" :key="p.id">
-            {{ p.firstName }} {{ p.lastName }} (OIB: {{ p.oib }})
+            {{ p.firstName }} {{ p.lastName }} (OIB: {{ p.oib }}, ID: {{ p.id }})
           </li>
         </ul>
         <button @click="clearSearchLastName">Clear</button>
       </div>
     </div>
 
-    <!-- List all patients -->
+    <!-- All Patients -->
     <h3>All Patients</h3>
     <ul>
       <li v-for="p in patients" :key="p.id">
-        {{ p.firstName }} {{ p.lastName }} (OIB: {{ p.oib }})
+        <!-- SHOW PATIENT ID HERE -->
+        (ID: {{ p.id }}) {{ p.firstName }} {{ p.lastName }} (OIB: {{ p.oib }})
         <button @click="editPatient(p)">Edit</button>
         <button @click="deletePatient(p.id)">Delete</button>
       </li>
     </ul>
 
-    <!-- Edit form if selectedPatient is set -->
+    <!-- Edit Form -->
     <div v-if="selectedPatient">
       <h3>Edit Patient</h3>
       <patient-form
@@ -76,11 +81,11 @@ export default {
       patients: [],
       selectedPatient: null,
 
-      // OIB search
+      // OIB
       searchOib: '',
       foundPatient: null,
 
-      // Last name search
+      // Last Name
       searchLastName: '',
       foundPatientsByLastName: [],
     };
@@ -94,7 +99,6 @@ export default {
         console.error(err);
       }
     },
-
     editPatient(patient) {
       this.selectedPatient = { ...patient };
     },
@@ -124,7 +128,6 @@ export default {
         console.error(err);
       }
     },
-
     // OIB
     async searchByOib() {
       if (!this.searchOib) return;
@@ -139,8 +142,7 @@ export default {
       this.foundPatient = null;
       this.searchOib = '';
     },
-
-    // LAST NAME
+    // Last Name
     async searchByLastName() {
       if (!this.searchLastName) return;
       try {

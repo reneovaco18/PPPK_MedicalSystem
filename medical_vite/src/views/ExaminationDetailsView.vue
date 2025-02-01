@@ -3,13 +3,21 @@
     <h2>Examination #{{ examination.id }} Details</h2>
     <p><strong>Type:</strong> {{ examination.type }}</p>
     <p><strong>Date/Time:</strong> {{ formattedDateTime }}</p>
-    <p><strong>Patient ID:</strong> {{ examination.patient?.id }}</p>
-    <p><strong>Patient Name:</strong> {{ examination.patient?.name }}</p>
+    <p><strong>Patient ID:</strong> {{ examination.patient?.id || 'N/A' }}</p>
+    <p><strong>Patient Name:</strong>
+      {{ examination.patient?.firstName || examination.patient?.name || 'Unknown' }}
+      {{ examination.patient?.lastName || '' }}
+    </p>
 
     <h3>Attached Images</h3>
     <div v-if="examination.files && examination.files.length > 0">
       <div v-for="file in examination.files" :key="file.id" class="image-container">
-        <img :src="file.filePath" alt="Examination Image" class="exam-image" />
+        <img
+            v-if="file.filePath"
+            :src="getImageUrl(file.filePath)"
+            alt="Examination Image"
+            class="exam-image"
+        />
       </div>
     </div>
     <div v-else>
@@ -54,6 +62,13 @@ export default {
     },
     goBack() {
       this.$router.push('/examinations');
+    },
+    getImageUrl(filePath) {
+      if (!filePath) return '';
+      if (filePath.startsWith('http')) {
+        return filePath;
+      }
+      return `https://your-backend-url.com/${filePath}`;
     },
   },
   mounted() {

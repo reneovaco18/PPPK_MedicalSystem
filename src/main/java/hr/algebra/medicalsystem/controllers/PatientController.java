@@ -29,18 +29,21 @@ public class PatientController {
         this.patientService = patientService;
     }
 
+    // CREATE
     @PostMapping
     public ResponseEntity<Patient> createPatient(@Validated @RequestBody Patient patient) {
-        Patient createdPatient = patientService.savePatient(patient);
-        return new ResponseEntity<>(createdPatient, HttpStatus.CREATED);
+        Patient created = patientService.savePatient(patient);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
+    // READ all
     @GetMapping
     public ResponseEntity<List<Patient>> getAllPatients() {
         List<Patient> patients = patientService.getAllPatients();
         return new ResponseEntity<>(patients, HttpStatus.OK);
     }
 
+    // READ by id
     @GetMapping("/{id}")
     public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
         Optional<Patient> patient = patientService.getPatientById(id);
@@ -48,34 +51,43 @@ public class PatientController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    // READ by OIB
     @GetMapping("/search/oib")
     public ResponseEntity<Patient> searchPatientByOib(@RequestParam String oib) {
         return patientService.getPatientByOib(oib)
-                .map(patient -> new ResponseEntity<>(patient, HttpStatus.OK))
+                .map(p -> new ResponseEntity<>(p, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    // READ by last name
     @GetMapping("/search/lastName")
     public ResponseEntity<List<Patient>> searchPatientsByLastName(@RequestParam String lastName) {
-        List<Patient> patients = patientService.getPatientsByLastName(lastName);
-        return patients.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                : new ResponseEntity<>(patients, HttpStatus.OK);
+        List<Patient> results = patientService.getPatientsByLastName(lastName);
+        if (results.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
+    // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @Validated @RequestBody Patient patientDetails) {
-        Optional<Patient> updatedPatient = patientService.updatePatient(id, patientDetails);
-        return updatedPatient.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+    public ResponseEntity<Patient> updatePatient(@PathVariable Long id,
+                                                 @Validated @RequestBody Patient details) {
+        Optional<Patient> updated = patientService.updatePatient(id, details);
+        return updated.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         boolean isDeleted = patientService.deletePatient(id);
-        return isDeleted ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        return isDeleted
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    // CSV Export
     @GetMapping("/export")
     public ResponseEntity<Resource> exportPatientsToCSV() {
         try {

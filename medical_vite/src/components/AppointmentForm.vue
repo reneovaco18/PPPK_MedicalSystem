@@ -12,19 +12,12 @@
         />
       </div>
 
-      <!-- Examination Type: use a <select> so the user must choose from the enum values -->
+      <!-- Examination Type (Dropdown) -->
       <div>
         <label>Type:</label>
-        <select
-            v-model="appointmentData.type"
-            required
-        >
-          <option
-              v-for="examType in examOptions"
-              :key="examType"
-              :value="examType"
-          >
-            {{ examType }}
+        <select v-model="appointmentData.type" required>
+          <option v-for="option in examOptions" :key="option" :value="option">
+            {{ option }}
           </option>
         </select>
       </div>
@@ -39,15 +32,8 @@
         />
       </div>
 
-      <button type="submit">
-        Save
-      </button>
-      <button
-          type="button"
-          @click="$emit('closeForm')"
-      >
-        Cancel
-      </button>
+      <button type="submit">Save</button>
+      <button type="button" @click="$emit('closeForm')">Cancel</button>
     </form>
   </div>
 </template>
@@ -70,21 +56,10 @@ export default {
         type: '',
         dateTime: '',
       },
-      // The list of enum values from your Java ExaminationType enum:
+      // Matches your ExaminationType enum in Java
       examOptions: [
-        'GP',
-        'KRV',
-        'X_RAY',
-        'CT',
-        'MR',
-        'ULTRA',
-        'EKG',
-        'ECHO',
-        'EYE',
-        'DERM',
-        'DENTA',
-        'MAMMO',
-        'NEURO',
+        'GP','KRV','X_RAY','CT','MR','ULTRA','EKG','ECHO',
+        'EYE','DERM','DENTA','MAMMO','NEURO',
       ],
     };
   },
@@ -94,7 +69,6 @@ export default {
     },
   },
   mounted() {
-    // If in edit mode, populate the form with existing data
     if (this.isEditMode) {
       this.appointmentData = {
         patientId: this.existingAppointment.patient?.id,
@@ -106,9 +80,8 @@ export default {
   methods: {
     async saveAppointment() {
       try {
-        // Construct payload as the back end expects
         const payload = {
-          patient: {id: this.appointmentData.patientId},
+          patient: { id: this.appointmentData.patientId },
           type: this.appointmentData.type,
           dateTime: this.appointmentData.dateTime,
         };

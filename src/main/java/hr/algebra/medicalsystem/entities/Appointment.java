@@ -26,9 +26,8 @@ public class Appointment {
     @Column(name = "appointment_type", nullable = false)
     private ExaminationType type;
 
-
     @Column(name = "appointment_date", nullable = false)
-    private LocalDate appointmentDate; // Changed to LocalDate
+    private LocalDate appointmentDate; // Derived from dateTime
 
     @Column(nullable = false)
     private LocalDateTime dateTime;

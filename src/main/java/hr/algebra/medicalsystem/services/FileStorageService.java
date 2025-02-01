@@ -27,6 +27,10 @@ public class FileStorageService {
     private final String bucketName;
     private final String endpointUrl;
 
+    // Inject your Supabase project URL
+    @Value("${supabase.project.url}")
+    private String projectUrl;
+
     @Autowired
     public FileStorageService(
             @Value("${supabase.s3.endpoint}") String endpointUrl,
@@ -36,7 +40,7 @@ public class FileStorageService {
             @Value("${supabase.bucket.name}") String bucketName
     ) {
         this.bucketName = bucketName;
-        this.endpointUrl = endpointUrl; // Save the endpoint URL for later use
+        this.endpointUrl = endpointUrl;
         AwsBasicCredentials creds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
         Region region = Region.of(regionName);
 
@@ -64,14 +68,13 @@ public class FileStorageService {
                     .key(objectKey)
                     .build();
 
-            PutObjectResponse response = s3Client.putObject(
+            s3Client.putObject(
                     putObjectRequest,
                     RequestBody.fromBytes(file.getBytes())
             );
 
-            // Construct the file URL using the injected endpointUrl
-            String fileUrl = String.format("%s/object/public/%s/%s", endpointUrl, bucketName, objectKey);
-
+            // Build the public URL using the project URL
+            String fileUrl = String.format("%s/storage/v1/object/public/%s/%s", projectUrl, bucketName, objectKey);
             return fileUrl;
         } catch (IOException e) {
             throw new RuntimeException("Could not read the file content: " + e.getMessage(), e);

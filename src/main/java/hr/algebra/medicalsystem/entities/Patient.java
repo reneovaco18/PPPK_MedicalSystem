@@ -45,22 +45,30 @@ public class Patient {
     @Column(nullable = false, length = 1)
     private String gender;
 
-    // IMPORTANT: Put @JsonIgnore here so Jackson won't recurse from Patient -> MedicalRecord -> Patient -> ...
+    // Medical records
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<MedicalRecord> medicalRecords;
 
-    // Same for Examinations
+    // Examinations
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Examination> examinations;
 
-    @Column(name = "patient_number", length = 20)
-    private String patientNumber;
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-    @JsonManagedReference  // Helps Jackson avoid infinite recursion
+    // Medications
+    @JsonManagedReference
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Medication> medications;
 
+    // NEW: Cascade from patient -> appointments
+    // If you delete a patient, all their appointments are deleted automatically
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Appointment> appointments;
+
+    @Column(name = "patient_number", length = 20)
+    private String patientNumber;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

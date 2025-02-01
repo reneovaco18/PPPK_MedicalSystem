@@ -22,32 +22,32 @@ public class PatientService {
         this.patientRepository = patientRepository;
     }
 
-    // Save a new patient
+    // CREATE or UPDATE
     public Patient savePatient(Patient patient) {
         return patientRepository.save(patient);
     }
 
-    // Get all patients
+    // READ all
     public List<Patient> getAllPatients() {
         return patientRepository.findAll();
     }
 
-    // Get a patient by ID
+    // READ one
     public Optional<Patient> getPatientById(Long id) {
         return patientRepository.findById(id);
     }
 
-    // Get a patient by OIB
+    // READ by OIB
     public Optional<Patient> getPatientByOib(String oib) {
         return patientRepository.findByOib(oib);
     }
 
-    // Get patients by last name
+    // READ by last name
     public List<Patient> getPatientsByLastName(String lastName) {
         return patientRepository.findByLastNameContainingIgnoreCase(lastName);
     }
 
-    // Update a patient
+    // UPDATE
     public Optional<Patient> updatePatient(Long id, Patient patientDetails) {
         return patientRepository.findById(id).map(patient -> {
             patient.setFirstName(patientDetails.getFirstName());
@@ -59,16 +59,18 @@ public class PatientService {
         });
     }
 
-    // Delete a patient
+    // DELETE
     public boolean deletePatient(Long id) {
-        if (patientRepository.existsById(id)) {
-            patientRepository.deleteById(id);
-            return true;
+        if (!patientRepository.existsById(id)) {
+            return false; // not found
         }
-        return false;
+        // Because we set cascade=ALL on the Patient->Appointment relationship,
+        // any existing appointments are also removed automatically.
+        patientRepository.deleteById(id);
+        return true;
     }
 
-    // Export patient data to CSV using the CSVExporter utility.
+    // CSV Export
     public String exportPatientsToCSV() {
         List<Patient> patients = patientRepository.findAll();
         String csvFile = "patients.csv";
@@ -81,5 +83,4 @@ public class PatientService {
             throw new RuntimeException("Error while exporting patients to CSV", e);
         }
     }
-
 }

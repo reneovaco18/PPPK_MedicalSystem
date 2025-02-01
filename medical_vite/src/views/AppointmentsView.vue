@@ -63,8 +63,6 @@ export default {
     async fetchAppointments() {
       try {
         const res = await axiosClient.get('/appointments');
-        // Note: your controller might not have a GET /appointments for “all,”
-        // so you might need to create it or skip listing all.
         this.appointments = res.data;
       } catch (err) {
         console.error(err);
@@ -81,6 +79,7 @@ export default {
         this.fetchAppointments();
       } catch (err) {
         console.error(err);
+        alert('Could not delete appointment.');
       }
     },
     async getAppointmentsByPatient() {
@@ -94,8 +93,6 @@ export default {
     },
   },
   mounted() {
-    // If you do not have “GET /api/appointments” for listing all,
-    // you can remove this or add such an endpoint to your back end.
     this.fetchAppointments();
   },
 };
