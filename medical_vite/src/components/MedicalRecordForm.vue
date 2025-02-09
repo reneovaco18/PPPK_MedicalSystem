@@ -52,9 +52,9 @@ export default {
   },
   mounted() {
     if (this.isEditMode) {
-      // Fill form with existing data
+
       this.recordData = {
-        patientId: this.existingRecord.patient?.id, // from back-end
+        patientId: this.existingRecord.patient?.id,
         illnessName: this.existingRecord.illnessName,
         startDate: this.existingRecord.startDate,
         endDate: this.existingRecord.endDate,
@@ -64,7 +64,7 @@ export default {
   methods: {
     async saveRecord() {
       try {
-        // Reconstruct payload
+
         const payload = {
           patient: { id: this.recordData.patientId },
           illnessName: this.recordData.illnessName,

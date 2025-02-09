@@ -3,17 +3,17 @@
     <h3>{{ isEditMode ? 'Edit Medication' : 'Create Medication' }}</h3>
     <form @submit.prevent="saveMedication">
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <!-- Patient ID -->
+
       <div>
         <label>Patient ID:</label>
         <input type="number" v-model.number="medicationData.patientId" required />
       </div>
-      <!-- Medication Name -->
+
       <div>
         <label>Name:</label>
         <input type="text" v-model="medicationData.name" required />
       </div>
-      <!-- Dosage -->
+
       <div>
         <label>Dosage:</label>
         <input type="text" v-model="medicationData.dosage" required />

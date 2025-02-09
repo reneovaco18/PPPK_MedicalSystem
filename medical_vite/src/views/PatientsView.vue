@@ -2,12 +2,11 @@
   <div>
     <h2>Patients</h2>
 
-    <!-- Button to show/hide the create form -->
     <button @click="showCreateForm = !showCreateForm">
       {{ showCreateForm ? 'Cancel' : 'Create New Patient' }}
     </button>
 
-    <!-- New Patient Form -->
+
     <div v-if="showCreateForm">
       <patient-form
           @closeForm="showCreateForm = false"
@@ -15,10 +14,10 @@
       />
     </div>
 
-    <!-- CSV Export -->
+
     <button @click="downloadCSV">Export Patients CSV</button>
 
-    <!-- OIB Search -->
+
     <div>
       <h3>Search by OIB</h3>
       <input v-model="searchOib" placeholder="Enter OIB" />
@@ -29,7 +28,6 @@
       </div>
     </div>
 
-    <!-- Last Name Search -->
     <div>
       <h3>Search by Last Name</h3>
       <input v-model="searchLastName" placeholder="Enter last name" />
@@ -45,18 +43,18 @@
       </div>
     </div>
 
-    <!-- All Patients -->
+
     <h3>All Patients</h3>
     <ul>
       <li v-for="p in patients" :key="p.id">
-        <!-- SHOW PATIENT ID HERE -->
+
         (ID: {{ p.id }}) {{ p.firstName }} {{ p.lastName }} (OIB: {{ p.oib }})
         <button @click="editPatient(p)">Edit</button>
         <button @click="deletePatient(p.id)">Delete</button>
       </li>
     </ul>
 
-    <!-- Edit Form -->
+
     <div v-if="selectedPatient">
       <h3>Edit Patient</h3>
       <patient-form
@@ -81,11 +79,11 @@ export default {
       patients: [],
       selectedPatient: null,
 
-      // OIB
+
       searchOib: '',
       foundPatient: null,
 
-      // Last Name
+
       searchLastName: '',
       foundPatientsByLastName: [],
     };
@@ -128,7 +126,7 @@ export default {
         console.error(err);
       }
     },
-    // OIB
+
     async searchByOib() {
       if (!this.searchOib) return;
       try {
@@ -142,7 +140,7 @@ export default {
       this.foundPatient = null;
       this.searchOib = '';
     },
-    // Last Name
+
     async searchByLastName() {
       if (!this.searchLastName) return;
       try {

@@ -2,16 +2,16 @@
   <div>
     <h3>{{ isEditMode ? 'Edit Examination' : 'Create Examination' }}</h3>
     <form @submit.prevent="saveExamination">
-      <!-- Error message display -->
+
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
 
-      <!-- Patient ID -->
+
       <div>
         <label>Patient ID:</label>
         <input type="number" v-model.number="examinationData.patientId" required />
       </div>
 
-      <!-- Examination Type as select -->
+
       <div>
         <label>Type:</label>
         <select v-model="examinationData.type" required>
@@ -22,7 +22,7 @@
         </select>
       </div>
 
-      <!-- Date/Time -->
+
       <div>
         <label>Date/Time:</label>
         <input type="datetime-local" v-model="examinationData.dateTime" required />
@@ -32,13 +32,13 @@
       <button type="button" @click="$emit('closeForm')">Cancel</button>
     </form>
 
-    <!-- File Upload (Only in Edit Mode) -->
+
     <div v-if="isEditMode">
       <h4>Upload Images</h4>
       <input type="file" multiple @change="onFileChange" />
       <button @click="uploadFiles" :disabled="selectedFiles.length === 0">Upload</button>
 
-      <!-- Show Preview of Selected Files -->
+
       <div v-if="selectedFiles.length > 0">
         <h5>Selected Files:</h5>
         <ul>
@@ -46,7 +46,7 @@
         </ul>
       </div>
 
-      <!-- Show Previously Uploaded Files -->
+
       <div v-if="existingFiles.length > 0">
         <h4>Uploaded Images:</h4>
         <div v-for="file in existingFiles" :key="file.id">
@@ -143,7 +143,7 @@ export default {
         await axiosClient.post(`/examination-files/${this.existingExamination.id}/upload-multiple`, formData, {
           headers: {'Content-Type': 'multipart/form-data'},
         });
-        await this.fetchExistingFiles(); // Refresh uploaded images
+        await this.fetchExistingFiles();
         this.selectedFiles = [];
       } catch (err) {
         console.error(err);

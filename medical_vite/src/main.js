@@ -15,5 +15,5 @@ app.use(Toast, {
 
 app.mount('#app');
 
-// Expose the toast instance globally for use in non-component files (such as axios interceptors)
+
 window.$toast = app.config.globalProperties.$toast;

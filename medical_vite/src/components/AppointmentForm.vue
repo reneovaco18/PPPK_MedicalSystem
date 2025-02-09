@@ -2,7 +2,7 @@
   <div>
     <h3>{{ isEditMode ? 'Edit' : 'Create' }} Appointment</h3>
     <form @submit.prevent="saveAppointment">
-      <!-- Patient ID -->
+
       <div>
         <label>Patient ID:</label>
         <input
@@ -12,7 +12,7 @@
         />
       </div>
 
-      <!-- Examination Type (Dropdown) -->
+
       <div>
         <label>Type:</label>
         <select v-model="appointmentData.type" required>
@@ -22,7 +22,7 @@
         </select>
       </div>
 
-      <!-- DateTime -->
+
       <div>
         <label>Date/Time:</label>
         <input
@@ -56,7 +56,7 @@ export default {
         type: '',
         dateTime: '',
       },
-      // Matches your ExaminationType enum in Java
+
       examOptions: [
         'GP','KRV','X_RAY','CT','MR','ULTRA','EKG','ECHO',
         'EYE','DERM','DENTA','MAMMO','NEURO',

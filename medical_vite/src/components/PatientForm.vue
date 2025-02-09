@@ -57,7 +57,7 @@ export default {
   },
   mounted() {
     if (this.isEditMode) {
-      // copy existing data into form
+
       this.patientData = { ...this.existingPatient };
     }
   },
@@ -65,11 +65,11 @@ export default {
     async savePatient() {
       try {
         if (this.isEditMode) {
-          // update
+
           await axiosClient.put(`/patients/${this.existingPatient.id}`, this.patientData);
           alert('Patient updated successfully');
         } else {
-          // create
+
           await axiosClient.post('/patients', this.patientData);
           alert('Patient created successfully');
         }

@@ -12,7 +12,6 @@
       />
     </div>
 
-    <!-- Search Examinations by Patient ID -->
     <div>
       <h3>Search Examinations by Patient ID</h3>
       <input v-model="searchPatientId" placeholder="Enter Patient ID" />
@@ -37,11 +36,11 @@
       <li v-for="exam in examinations" :key="exam.id">
         <strong>Type:</strong> {{ exam.type }} -
         <strong>Date:</strong> {{ exam.dateTime }}
-        <!-- Fix patient name display -->
+
         (Patient ID: {{ exam.patient?.id || 'N/A' }},
         Name: {{ exam.patient?.firstName || exam.patient?.name || 'Unknown' }} {{ exam.patient?.lastName || '' }})
 
-        <!-- Link to the details page -->
+
         <router-link :to="{ name: 'ExaminationDetails', params: { id: exam.id } }">
           View Details
         </router-link>
@@ -49,7 +48,6 @@
         <button @click="editExamination(exam)">Edit</button>
         <button @click="deleteExamination(exam.id)">Delete</button>
 
-        <!-- Show images if available -->
         <div v-if="exam.files && exam.files.length > 0">
           <h4>Uploaded Images:</h4>
           <div v-for="file in exam.files" :key="file.id">
