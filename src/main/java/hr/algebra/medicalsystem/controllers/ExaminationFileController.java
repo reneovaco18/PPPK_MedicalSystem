@@ -21,7 +21,7 @@ public class ExaminationFileController {
         this.fileService = fileService;
     }
 
-    // Upload a single file
+
     @PostMapping("/{examId}/upload")
     public ResponseEntity<String> uploadSingleFile(
             @PathVariable Long examId,
@@ -35,7 +35,7 @@ public class ExaminationFileController {
         }
     }
 
-    // Upload multiple files at once
+
     @PostMapping("/{examId}/upload-multiple")
     public ResponseEntity<String> uploadMultipleFiles(
             @PathVariable Long examId,

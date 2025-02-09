@@ -27,7 +27,7 @@ public class FileStorageService {
     private final String bucketName;
     private final String endpointUrl;
 
-    // Inject your Supabase project URL
+
     @Value("${supabase.project.url}")
     private String projectUrl;
 
@@ -73,7 +73,7 @@ public class FileStorageService {
                     RequestBody.fromBytes(file.getBytes())
             );
 
-            // Build the public URL using the project URL
+
             String fileUrl = String.format("%s/storage/v1/object/public/%s/%s", projectUrl, bucketName, objectKey);
             return fileUrl;
         } catch (IOException e) {

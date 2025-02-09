@@ -42,7 +42,7 @@ public class MedicationController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Find meds by patient ID
+
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<Medication>> getMedicationsByPatient(@PathVariable Long patientId) {
         List<Medication> meds = medicationService.findByPatient(patientId);

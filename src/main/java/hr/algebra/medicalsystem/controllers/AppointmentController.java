@@ -22,14 +22,14 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
-    // GET all
+
     @GetMapping
     public ResponseEntity<List<Appointment>> getAllAppointments() {
         List<Appointment> appointments = appointmentService.getAllAppointments();
         return new ResponseEntity<>(appointments, HttpStatus.OK);
     }
 
-    // CREATE
+
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(@Validated @RequestBody Appointment appointment) {
         try {
@@ -40,13 +40,13 @@ public class AppointmentController {
         }
     }
 
-    // GET by patient
+
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<Appointment>> getAppointmentsByPatient(@PathVariable Long patientId) {
         return new ResponseEntity<>(appointmentService.getAppointmentsByPatient(patientId), HttpStatus.OK);
     }
 
-    // GET by ID
+
     @GetMapping("/{id}")
     public ResponseEntity<Appointment> getAppointmentById(@PathVariable Long id) {
         Optional<Appointment> appt = appointmentService.getAppointmentById(id);
@@ -54,7 +54,7 @@ public class AppointmentController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // UPDATE
+
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(
             @PathVariable Long id,
@@ -69,7 +69,7 @@ public class AppointmentController {
         }
     }
 
-    // DELETE
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
         boolean isDeleted = appointmentService.deleteAppointment(id);

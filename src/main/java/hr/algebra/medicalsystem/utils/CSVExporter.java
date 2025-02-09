@@ -11,17 +11,17 @@ import java.util.List;
 public class CSVExporter {
 
     public void writePatientsToCSV(PrintWriter writer, List<Patient> patients) {
-        // 1) Write a UTF-8 BOM
+
         writer.write('\uFEFF');
 
-        // 2) Add a line telling Excel to use commas.
+
         writer.println("sep=,");
 
-        // Now your header line:
+
         writer.println("ID,First Name,Last Name,OIB,Date of Birth,Gender,Medical Records,Examinations,Medications");
 
         for (Patient patient : patients) {
-            // Build a string for Medical Records
+
             StringBuilder medicalRecords = new StringBuilder();
             if (patient.getMedicalRecords() != null) {
                 for (MedicalRecord record : patient.getMedicalRecords()) {
@@ -34,7 +34,7 @@ public class CSVExporter {
                 }
             }
 
-            // Build a string for Examinations
+
             StringBuilder examinations = new StringBuilder();
             if (patient.getExaminations() != null) {
                 for (Examination exam : patient.getExaminations()) {
@@ -45,7 +45,7 @@ public class CSVExporter {
                 }
             }
 
-            // Build a string for Medications
+
             StringBuilder meds = new StringBuilder();
             if (patient.getMedications() != null) {
                 for (Medication med : patient.getMedications()) {
@@ -56,7 +56,7 @@ public class CSVExporter {
                 }
             }
 
-            // Escape each field
+
             String id = escapeSpecialCharacters(String.valueOf(patient.getId()));
             String firstName = escapeSpecialCharacters(patient.getFirstName());
             String lastName = escapeSpecialCharacters(patient.getLastName());
@@ -67,17 +67,14 @@ public class CSVExporter {
             String exams = escapeSpecialCharacters(examinations.toString());
             String medications = escapeSpecialCharacters(meds.toString());
 
-            // Print row as comma-separated values
+
             writer.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
                     id, firstName, lastName, oib, dob, gender,
                     records, exams, medications);
         }
     }
 
-    /**
-     * Escapes commas, quotes, or newlines in the data. If data contains any
-     * of these, it’s wrapped in quotes, and existing quotes become doubled.
-     */
+
     private String escapeSpecialCharacters(String data) {
         if (data == null) {
             return "";

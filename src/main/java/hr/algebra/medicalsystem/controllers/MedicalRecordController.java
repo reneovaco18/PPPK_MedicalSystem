@@ -22,21 +22,21 @@ public class MedicalRecordController {
         this.medicalRecordService = medicalRecordService;
     }
 
-    // Create a medical record
+
     @PostMapping
     public ResponseEntity<MedicalRecord> createMedicalRecord(@Validated @RequestBody MedicalRecord medicalRecord) {
         MedicalRecord createdRecord = medicalRecordService.saveMedicalRecord(medicalRecord);
         return new ResponseEntity<>(createdRecord, HttpStatus.CREATED);
     }
 
-    // Get all medical records for a specific patient
+
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<MedicalRecord>> getRecordsByPatient(@PathVariable Long patientId) {
         List<MedicalRecord> records = medicalRecordService.getMedicalRecordsByPatient(patientId);
         return new ResponseEntity<>(records, HttpStatus.OK);
     }
 
-    // Get a medical record by ID
+
     @GetMapping("/{id}")
     public ResponseEntity<MedicalRecord> getMedicalRecordById(@PathVariable Long id) {
         Optional<MedicalRecord> record = medicalRecordService.getMedicalRecordById(id);
@@ -44,7 +44,7 @@ public class MedicalRecordController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Update a medical record
+
     @PutMapping("/{id}")
     public ResponseEntity<MedicalRecord> updateMedicalRecord(@PathVariable Long id, @Validated @RequestBody MedicalRecord recordDetails) {
         Optional<MedicalRecord> updatedRecord = medicalRecordService.updateMedicalRecord(id, recordDetails);
@@ -52,7 +52,7 @@ public class MedicalRecordController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Delete a medical record
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMedicalRecord(@PathVariable Long id) {
         boolean isDeleted = medicalRecordService.deleteMedicalRecord(id);

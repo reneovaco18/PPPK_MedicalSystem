@@ -34,7 +34,7 @@ public class Examination {
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
-    // Only support multiple images via the one-to-many relationship.
+
     @OneToMany(mappedBy = "examination", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ExaminationFile> files = new ArrayList<>();

@@ -19,12 +19,12 @@ public class Medication {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
-    @JsonBackReference  // This side is the back reference
+    @JsonBackReference
     private Patient patient;
 
     @NotBlank
-    private String name;   // e.g. “Ibuprofen”
+    private String name;
 
     @NotBlank
-    private String dosage; // e.g. “200mg daily”
+    private String dosage;
 }

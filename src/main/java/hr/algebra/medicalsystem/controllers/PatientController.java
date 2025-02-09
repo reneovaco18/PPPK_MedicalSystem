@@ -29,21 +29,21 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    // CREATE
+
     @PostMapping
     public ResponseEntity<Patient> createPatient(@Validated @RequestBody Patient patient) {
         Patient created = patientService.savePatient(patient);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
-    // READ all
+
     @GetMapping
     public ResponseEntity<List<Patient>> getAllPatients() {
         List<Patient> patients = patientService.getAllPatients();
         return new ResponseEntity<>(patients, HttpStatus.OK);
     }
 
-    // READ by id
+
     @GetMapping("/{id}")
     public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
         Optional<Patient> patient = patientService.getPatientById(id);
@@ -51,7 +51,7 @@ public class PatientController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // READ by OIB
+
     @GetMapping("/search/oib")
     public ResponseEntity<Patient> searchPatientByOib(@RequestParam String oib) {
         return patientService.getPatientByOib(oib)
@@ -59,7 +59,7 @@ public class PatientController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // READ by last name
+
     @GetMapping("/search/lastName")
     public ResponseEntity<List<Patient>> searchPatientsByLastName(@RequestParam String lastName) {
         List<Patient> results = patientService.getPatientsByLastName(lastName);
@@ -69,7 +69,7 @@ public class PatientController {
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
-    // UPDATE
+
     @PutMapping("/{id}")
     public ResponseEntity<Patient> updatePatient(@PathVariable Long id,
                                                  @Validated @RequestBody Patient details) {
@@ -78,7 +78,7 @@ public class PatientController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // DELETE
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         boolean isDeleted = patientService.deletePatient(id);
@@ -87,7 +87,7 @@ public class PatientController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // CSV Export
+
     @GetMapping("/export")
     public ResponseEntity<Resource> exportPatientsToCSV() {
         try {

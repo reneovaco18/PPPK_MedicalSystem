@@ -18,12 +18,11 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
-    // Get all appointments
     public List<Appointment> getAllAppointments() {
         return appointmentRepository.findAll();
     }
 
-    // Create an appointment
+
     public Appointment saveAppointment(Appointment appointment) {
         if (appointment.getDateTime() != null) {
             appointment.setAppointmentDate(appointment.getDateTime().toLocalDate());
@@ -33,17 +32,16 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    // Find appointments by patient
+
     public List<Appointment> getAppointmentsByPatient(Long patientId) {
         return appointmentRepository.findByPatientId(patientId);
     }
 
-    // Get an appointment by ID
     public Optional<Appointment> getAppointmentById(Long id) {
         return appointmentRepository.findById(id);
     }
 
-    // Update an appointment
+
     public Optional<Appointment> updateAppointment(Long id, Appointment appointmentDetails) {
         return appointmentRepository.findById(id).map(appt -> {
             appt.setPatient(appointmentDetails.getPatient());
@@ -57,7 +55,7 @@ public class AppointmentService {
         });
     }
 
-    // Delete an appointment
+
     public boolean deleteAppointment(Long id) {
         if (appointmentRepository.existsById(id)) {
             appointmentRepository.deleteById(id);

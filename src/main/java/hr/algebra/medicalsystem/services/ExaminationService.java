@@ -47,7 +47,7 @@ public class ExaminationService {
         return examinationRepository.findById(id).map(examination -> {
             examination.setDateTime(updatedExamination.getDateTime());
             examination.setType(updatedExamination.getType());
-            // Do not modify the files list here; assume file uploads are managed separately.
+
             return examinationRepository.save(examination);
         });
     }

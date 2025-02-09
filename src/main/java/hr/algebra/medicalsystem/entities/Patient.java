@@ -45,23 +45,22 @@ public class Patient {
     @Column(nullable = false, length = 1)
     private String gender;
 
-    // Medical records
+
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<MedicalRecord> medicalRecords;
 
-    // Examinations
+
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Examination> examinations;
 
-    // Medications
+
     @JsonManagedReference
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Medication> medications;
 
-    // NEW: Cascade from patient -> appointments
-    // If you delete a patient, all their appointments are deleted automatically
+
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Appointment> appointments;

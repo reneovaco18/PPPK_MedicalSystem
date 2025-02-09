@@ -23,21 +23,21 @@ public class ExaminationController {
         this.examinationService = examinationService;
     }
 
-    // Create a new examination
+
     @PostMapping
     public ResponseEntity<Examination> createExamination(@Validated @RequestBody Examination examination) {
         Examination createdExamination = examinationService.saveExamination(examination);
         return new ResponseEntity<>(createdExamination, HttpStatus.CREATED);
     }
 
-    // Get all examinations
+
     @GetMapping
     public ResponseEntity<List<Examination>> getAllExaminations() {
         List<Examination> examinations = examinationService.getAllExaminations();
         return new ResponseEntity<>(examinations, HttpStatus.OK);
     }
 
-    // Get an examination by ID
+
     @GetMapping("/{id}")
     public ResponseEntity<Examination> getExaminationById(@PathVariable Long id) {
         Optional<Examination> examination = examinationService.getExaminationById(id);
@@ -45,21 +45,21 @@ public class ExaminationController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Get examinations by patient ID
+
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<Examination>> getExaminationsByPatient(@PathVariable Long patientId) {
         List<Examination> examinations = examinationService.getExaminationsByPatient(patientId);
         return new ResponseEntity<>(examinations, HttpStatus.OK);
     }
 
-    // Get examinations by type
+
     @GetMapping("/type/{type}")
     public ResponseEntity<List<Examination>> getExaminationsByType(@PathVariable String type) {
         List<Examination> examinations = examinationService.getExaminationsByType(type);
         return new ResponseEntity<>(examinations, HttpStatus.OK);
     }
 
-    // Get examinations by date range
+
     @GetMapping("/date-range")
     public ResponseEntity<List<Examination>> getExaminationsByDateRange(
             @RequestParam("startDate") LocalDateTime startDate,
@@ -68,7 +68,7 @@ public class ExaminationController {
         return new ResponseEntity<>(examinations, HttpStatus.OK);
     }
 
-    // Update an examination
+
     @PutMapping("/{id}")
     public ResponseEntity<Examination> updateExamination(@PathVariable Long id, @Validated @RequestBody Examination examination) {
         Optional<Examination> updatedExamination = examinationService.updateExamination(id, examination);
@@ -76,7 +76,6 @@ public class ExaminationController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Delete an examination
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteExamination(@PathVariable Long id) {
         boolean isDeleted = examinationService.deleteExamination(id);

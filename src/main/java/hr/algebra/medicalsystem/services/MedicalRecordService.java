@@ -18,22 +18,21 @@ public class MedicalRecordService {
         this.medicalRecordRepository = medicalRecordRepository;
     }
 
-    // Save a medical record
+
     public MedicalRecord saveMedicalRecord(MedicalRecord medicalRecord) {
         return medicalRecordRepository.save(medicalRecord);
     }
 
-    // Get all medical records for a patient
+
     public List<MedicalRecord> getMedicalRecordsByPatient(Long patientId) {
         return medicalRecordRepository.findByPatientId(patientId);
     }
 
-    // Get a medical record by ID
+
     public Optional<MedicalRecord> getMedicalRecordById(Long id) {
         return medicalRecordRepository.findById(id);
     }
 
-    // Update a medical record
     public Optional<MedicalRecord> updateMedicalRecord(Long id, MedicalRecord recordDetails) {
         return medicalRecordRepository.findById(id).map(record -> {
             record.setIllnessName(recordDetails.getIllnessName());
@@ -43,7 +42,7 @@ public class MedicalRecordService {
         });
     }
 
-    // Delete a medical record
+
     public boolean deleteMedicalRecord(Long id) {
         if (medicalRecordRepository.existsById(id)) {
             medicalRecordRepository.deleteById(id);

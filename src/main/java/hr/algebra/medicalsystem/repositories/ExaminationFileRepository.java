@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExaminationFileRepository extends JpaRepository<ExaminationFile, Long> {
-    // Typically, you might add custom finders if you need them
-    // e.g. findByExaminationId(Long examId)
+
 }

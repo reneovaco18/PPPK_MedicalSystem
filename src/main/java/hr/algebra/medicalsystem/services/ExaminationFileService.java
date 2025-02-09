@@ -26,31 +26,27 @@ public class ExaminationFileService {
         this.examinationRepository = examinationRepository;
     }
 
-    /**
-     * Stores one file and links it to a given examination.
-     */
+
     public Optional<ExaminationFile> storeFileForExamination(Long examinationId, MultipartFile file) {
         return examinationRepository.findById(examinationId).map(exam -> {
-            // 1) Upload to S3 (Supabase)
+
             String filePath = fileStorageService.storeFile(file);
 
-            // 2) Create new ExaminationFile entity
+
             ExaminationFile examFile = new ExaminationFile();
             examFile.setExamination(exam);
             examFile.setFilePath(filePath);
 
-            // 3) Save
+
             return fileRepository.save(examFile);
         });
     }
 
-    /**
-     * Stores multiple files for an examination.
-     */
+
     public boolean storeMultipleFilesForExamination(Long examinationId, MultipartFile[] files) {
         Optional<Examination> maybeExam = examinationRepository.findById(examinationId);
         if (maybeExam.isEmpty()) {
-            return false; // Examination not found
+            return false;
         }
         Examination exam = maybeExam.get();
 
@@ -64,5 +60,5 @@ public class ExaminationFileService {
         return true;
     }
 
-    // Additional methods if needed, e.g. delete a file, find all files for an exam, etc.
+
 }
